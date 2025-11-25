@@ -6,7 +6,7 @@
 
 // GANTI DENGAN URL RAILWAY KAMU
 const BASE_BE_URL = "https://assessment-generator-production.up.railway.app"; 
-const QUIZ_RESET_URL = "https://refill-backend2-production.up.railway.app/quiz/reset";
+const QUIZ_RESET_URL = "https://refill-backend2-production.up.railway.app";
 
 const QUIZ_GENERATE_URL = `${BASE_BE_URL}/quiz/generate`;
 const HINT_GENERATE_URL = "http://localhost:3002/hint/generate";
