@@ -10,13 +10,13 @@ const BASE_BE_URL = "https://refill-backend2-production.up.railway.app";
 const QUIZ_RESET_URL = "https://refill-backend2-production.up.railway.app";
 
 const QUIZ_GENERATE_URL = `${BASE_BE_URL}/quiz/generate`;
-const HINT_GENERATE_URL = "http://localhost:3002/hint/generate";
+//const HINT_GENERATE_URL = "http://localhost:3002/hint/generate";
 
 // Tambahkan konstanta URL
 const SUBMIT_SCORE_URL = "http://localhost:3001/quiz/submit";
 
 
-HINT_GENERATE_URL = "http://localhost:3002/hint/generate";
+//HINT_GENERATE_URL = "http://localhost:3002/hint/generate";
 
 
 // ==========================================
