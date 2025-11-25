@@ -19,7 +19,7 @@ function useLocalStorage(key, initialValue) {
     } catch (error) {
       console.error("Error writing localStorage key “" + key + "”: ", error);
     }
-  }, [key, storedValue]); // Dipanggil saat key atau storedValue berubah
+  }, [key, storedValue]);
 
   return [storedValue, setStoredValue];
 }

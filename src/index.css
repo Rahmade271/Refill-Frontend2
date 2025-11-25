@@ -1,239 +1,153 @@
 @import "tailwindcss";
 
 /* =======================================================
-   BASE COLOR TOKENS
+   BASE TOKENS: Warna & Font
    ======================================================= */
 
 @theme {
-  /* Base Colors */
+  /* Brand Colors */
   --color-blue-primary: #155dfc;
-  --color-green-correct-primary: #00a741;
-  --color-white-primary: #ffffff;
-  --color-black-primary: #000000;
-  --color-red-wrong-primary: #ff5b6a;
-  --color-yellow-hint-primary: #f1b300;
+  --color-green-primary: #00a741;
+  --color-red-primary: #ff5b6a;
+  --color-yellow-primary: #f1b300;
   --color-hint-button-yellow: #ffdb2e;
 
-  /* Light Mode */
-  --color-bg-light-primary: #f9fafb;
-  --color-text-light-primary: #364153;
-  --color-blue-light-secondary: #cee4ff;
-  --color-green-correct-light-secondary: #f0fdf4;
-  --color-red-wrong-light-secondary: #fee2e2;
-  --color-yellow-hint-secondary: rgb(241 179 0 / 0.1);
+  /* Base Neutrals */
+  --white-primary: #ffffff;
+  --black-primary: #000000;
 
-  /* Dark Mode */
-  --color-bg-dark-primary: #101828;
-  --color-bg-dark-secondary: #1e2939;
-  --color-text-dark-primary: #d1d5dc;
-  --color-green-correct-dark-secondary: rgb(0 167 65 / 0.2);
-  --color-red-wrong-dark-secondary: rgb(255 91 106 / 0.2);
+  /* Light Theme Colors */
+  --bg-light-primary: #f9fafb;
+  --bg-light-secondary: #ffffff;
+  --text-light-primary: #364153;
+  --text-light-secondary: #000000;
+  --text-light-terniary: rgba(54, 65, 83, 0.5);
 
-  /* Font Families */
-  --font-family-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
+  --blue-light-secondary: #cee4ff;
+  --green-light-primary: #f0fdf4;
+  --red-light-primary: #fff1f2;
+  --yellow-light-secondary: rgb(241 179 0 / 0.1);
+  --hover-light: rgb(0 0 0 / 0.2);
+
+  /* Dark Theme Colors */
+  --bg-dark-primary: #101828;
+  --bg-dark-secondary: #1e2939;
+  --text-dark-primary: #d1d5dc;
+  --text-dark-secondary: #ffffff;
+
+  --green-dark-primary: rgb(0 167 65 / 0.2);
+  --red-dark-primary: rgb(255 91 106 / 0.2);
+
+  /* Fonts */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-family-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times,
-    serif;
-  --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
+
+  /* Used as “open dyslexic style” fallback */
+  --font-open-dyslexic: var(--font-mono);
 }
 
 /* =======================================================
-   GLOBAL ALIAS (Required by polished UI)
+   DEFAULT THEME (Light)
    ======================================================= */
 
 html {
+  --bg-primary: var(--bg-light-primary);
+  --bg-secondary: var(--bg-light-secondary);
+  --text-primary: var(--text-light-primary);
+  --text-secondary: var(--text-light-secondary);
+  --text-terniary: var(--text-light-terniary);
+
   --blue-primary: var(--color-blue-primary);
-  --green-correct-primary: var(--color-green-correct-primary);
-  --red-wrong-primary: var(--color-red-wrong-primary);
-  --yellow-hint-primary: var(--color-yellow-hint-primary);
+  --blue-secondary: var(--blue-light-secondary);
+
+  --green-primary: var(--color-green-primary);
+  --green-secondary: var(--green-light-primary);
+
+  --red-primary: var(--color-red-primary);
+  --red-secondary: var(--red-light-primary);
+
+  --yellow-primary: var(--color-yellow-primary);
+  --yellow-secondary: var(--yellow-light-secondary);
+  --hint-button-yellow: var(--color-hint-button-yellow);
+
+  --font-primary: var(--font-sans);
+  --font-size-content: 1rem;
+
+  --max-width-content: 800px;
+  --max-width-card: 500px;
 }
 
 /* =======================================================
-   USER THEMES (user-1 → user-6)
+   THEME: DARK MODE
    ======================================================= */
 
-/* ===================== USER 1 ===================== */
-html[data-user-theme="user-1"] {
-  --bg-primary: var(--color-bg-dark-primary);
-  --bg-secondary: var(--color-bg-dark-secondary);
-  --text-primary: var(--color-text-dark-primary);
-  --text-secondary: var(--color-white-primary);
+html[data-theme="dark"] {
+  --bg-primary: var(--bg-dark-primary);
+  --bg-secondary: var(--bg-dark-secondary);
+
+  --text-primary: var(--text-dark-primary);
+  --text-secondary: var(--text-dark-secondary);
 
   --blue-secondary: var(--color-blue-primary);
-  --green-correct-secondary: var(--color-green-correct-dark-secondary);
-  --red-wrong-secondary: var(--color-red-wrong-dark-secondary);
-  --yellow-hint-secondary: var(--color-yellow-hint-secondary);
 
-  --font-primary: var(--font-family-sans);
-  --font-size-content: 1rem;
-  --max-width-content: 900px;
-  --max-width-card: 600px;
+  --green-primary: var(--color-green-primary);
+  --green-secondary: var(--green-dark-primary);
+
+  --red-primary: var(--color-red-primary);
+  --red-secondary: var(--red-dark-primary);
+
+  --yellow-secondary: var(--yellow-light-secondary);
 }
 
-html[data-user-theme="user-1"][data-theme="light"] {
-  --bg-primary: var(--color-bg-light-primary);
-  --bg-secondary: var(--color-white-primary);
-  --text-primary: var(--color-text-light-primary);
-  --text-secondary: var(--color-black-primary);
-  --blue-secondary: var(--color-blue-light-secondary);
-  --green-correct-secondary: var(--color-green-correct-light-secondary);
-  --red-wrong-secondary: var(--color-red-wrong-light-secondary);
+/* =======================================================
+   FONT FAMILY VARIANTS
+   ======================================================= */
+
+html[data-font="default"] {
+  --font-primary: var(--font-sans);
 }
 
-/* ===================== USER 2 ===================== */
-html[data-user-theme="user-2"] {
-  --bg-primary: var(--color-bg-light-primary);
-  --bg-secondary: var(--color-white-primary);
-  --text-primary: var(--color-text-light-primary);
-  --text-secondary: var(--color-black-primary);
-
-  --blue-secondary: var(--color-blue-light-secondary);
-  --green-correct-secondary: var(--color-green-correct-light-secondary);
-  --red-wrong-secondary: var(--color-red-wrong-light-secondary);
-
-  --font-primary: var(--font-family-sans);
-  --font-size-content: 1.125rem;
-  --max-width-content: 900px;
-  --max-width-card: 600px;
+html[data-font="serif"] {
+  --font-primary: var(--font-serif);
 }
 
-html[data-user-theme="user-2"][data-theme="dark"] {
-  --bg-primary: var(--color-bg-dark-primary);
-  --bg-secondary: var(--color-bg-dark-secondary);
-  --text-primary: var(--color-text-dark-primary);
-  --text-secondary: var(--color-white-primary);
-  --blue-secondary: var(--color-blue-primary);
-  --green-correct-secondary: var(--color-green-correct-dark-secondary);
-  --red-wrong-secondary: var(--color-red-wrong-dark-secondary);
+html[data-font="open-dyslexic"] {
+  --font-primary: var(--font-open-dyslexic);
 }
 
-/* ===================== USER 3 ===================== */
-html[data-user-theme="user-3"] {
-  --bg-primary: var(--color-bg-dark-primary);
-  --bg-secondary: var(--color-bg-dark-secondary);
-  --text-primary: var(--color-text-dark-primary);
-  --text-secondary: var(--color-white-primary);
+/* =======================================================
+   FONT SIZE VARIANTS
+   ======================================================= */
 
-  --blue-secondary: var(--color-blue-primary);
-  --green-correct-secondary: var(--color-green-correct-dark-secondary);
-  --red-wrong-secondary: var(--color-red-wrong-dark-secondary);
-
-  --font-primary: var(--font-family-serif);
-  --font-size-content: 1rem;
-  --max-width-content: 900px;
-  --max-width-card: 600px;
-}
-
-html[data-user-theme="user-3"][data-theme="light"] {
-  --bg-primary: var(--color-bg-light-primary);
-  --bg-secondary: var(--color-white-primary);
-  --text-primary: var(--color-text-light-primary);
-  --text-secondary: var(--color-black-primary);
-  --blue-secondary: var(--color-blue-light-secondary);
-  --green-correct-secondary: var(--color-green-correct-light-secondary);
-  --red-wrong-secondary: var(--color-red-wrong-light-secondary);
-}
-
-/* ===================== USER 4 ===================== */
-html[data-user-theme="user-4"] {
-  --bg-primary: var(--color-bg-light-primary);
-  --bg-secondary: var(--color-white-primary);
-  --text-primary: var(--color-text-light-primary);
-  --text-secondary: var(--color-black-primary);
-
-  --blue-secondary: var(--color-blue-light-secondary);
-  --green-correct-secondary: var(--color-green-correct-light-secondary);
-  --red-wrong-secondary: var(--color-red-wrong-light-secondary);
-
-  --font-primary: var(--font-family-serif);
+html[data-size="small"] {
   --font-size-content: 0.875rem;
-  --max-width-content: 900px;
-  --max-width-card: 600px;
 }
 
-html[data-user-theme="user-4"][data-theme="dark"] {
-  --bg-primary: var(--color-bg-dark-primary);
-  --bg-secondary: var(--color-bg-dark-secondary);
-  --text-primary: var(--color-text-dark-primary);
-  --text-secondary: var(--color-white-primary);
-  --blue-secondary: var(--color-blue-primary);
-  --green-correct-secondary: var(--color-green-correct-dark-secondary);
-  --red-wrong-secondary: var(--color-red-wrong-dark-secondary);
+html[data-size="medium"] {
+  --font-size-content: 1rem;
 }
 
-/* ===================== USER 5 ===================== */
-html[data-user-theme="user-5"] {
-  --bg-primary: var(--color-bg-dark-primary);
-  --bg-secondary: var(--color-bg-dark-secondary);
-  --text-primary: var(--color-text-dark-primary);
-  --text-secondary: var(--color-white-primary);
-
-  --blue-secondary: var(--color-blue-primary);
-  --green-correct-secondary: var(--color-green-correct-dark-secondary);
-  --red-wrong-secondary: var(--color-red-wrong-dark-secondary);
-
-  --font-primary: var(--font-family-mono);
+html[data-size="large"] {
   --font-size-content: 1.125rem;
-  --max-width-content: 900px;
-  --max-width-card: 900px;
-}
-
-html[data-user-theme="user-5"][data-theme="light"] {
-  --bg-primary: var(--color-bg-light-primary);
-  --bg-secondary: var(--color-white-primary);
-  --text-primary: var(--color-text-light-primary);
-  --text-secondary: var(--color-black-primary);
-  --blue-secondary: var(--color-blue-light-secondary);
-  --green-correct-secondary: var(--color-green-correct-light-secondary);
-  --red-wrong-secondary: var(--color-red-wrong-light-secondary);
-}
-
-/* ===================== USER 6 ===================== */
-html[data-user-theme="user-6"] {
-  --bg-primary: var(--color-bg-light-primary);
-  --bg-secondary: var(--color-white-primary);
-  --text-primary: var(--color-text-light-primary);
-  --text-secondary: var(--color-black-primary);
-
-  --blue-secondary: var(--color-blue-light-secondary);
-  --green-correct-secondary: var(--color-green-correct-light-secondary);
-  --red-wrong-secondary: var(--color-red-wrong-light-secondary);
-
-  --font-primary: var(--font-family-mono);
-  --font-size-content: 1.125rem;
-  --max-width-content: 900px;
-  --max-width-card: 600px;
-}
-
-html[data-user-theme="user-6"][data-theme="dark"] {
-  --bg-primary: var(--color-bg-dark-primary);
-  --bg-secondary: var(--color-bg-dark-secondary);
-  --text-primary: var(--color-text-dark-primary);
-  --text-secondary: var(--color-white-primary);
-  --blue-secondary: var(--color-blue-primary);
-  --green-correct-secondary: var(--color-green-correct-dark-secondary);
-  --red-wrong-secondary: var(--color-red-wrong-dark-secondary);
 }
 
 /* =======================================================
-   DEFAULT FALLBACK
+   LAYOUT WIDTH
    ======================================================= */
 
-html {
-  --bg-primary: var(--color-bg-light-primary);
-  --bg-secondary: var(--color-white-primary);
-  --text-primary: var(--color-text-light-primary);
-  --text-secondary: var(--color-black-primary);
-  --blue-secondary: var(--color-blue-light-secondary);
-  --green-correct-secondary: var(--color-green-correct-light-secondary);
-  --red-wrong-secondary: var(--color-red-wrong-light-secondary);
+html[data-width="mediumWidth"] {
+  --max-width-content: 500px;
+  --max-width-card: 500px;
+}
 
-  --font-primary: var(--font-family-sans);
-  --font-size-content: 1rem;
-
-  --max-width-content: 900px;
-  --max-width-card: 600px;
+html[data-width="fullWidth"] {
+  --max-width-content: 800px;
+  --max-width-card: 800px;
 }
 
 /* =======================================================
@@ -242,12 +156,12 @@ html {
 
 body {
   font-family: var(--font-primary);
-  font-size: 16px;
+  font-size: var(--font-size-content);
   background-color: var(--bg-primary);
   color: var(--text-primary);
   margin: 0;
   padding: 0;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 .content-text {
@@ -255,5 +169,5 @@ body {
 }
 
 code {
-  font-family: var(--font-family-mono);
+  font-family: var(--font-mono);
 }

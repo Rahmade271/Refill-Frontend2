@@ -3,6 +3,6 @@
 export const MOCK_USER_PREFS = {
     layoutWidth: 'standard', 
     fontStyle: 'default',
-    theme: 'light', 
+    theme: 'dark', 
     fontSize: 'medium',
 };
