@@ -1,410 +1,342 @@
-import React, { useState, useEffect } from 'react';
-import { useUrlParams } from '../hooks/useUrlParams';
-import useLocalStorage from '../hooks/useLocalStorage';
-import QuestionCard from './QuestionCard'; 
-import QuizResults from './QuizResults'; 
-import WelcomeScreen from './WelcomeScreen'; 
-import { checkSingleQuestion, calculateScore } from '../utils/quizLogic'; 
-import { fetchQuizDataAndPrefs } from '../services/backendApi'; 
-import { applyUserThemeToDocument } from '../utils/applyUserThemeToDocument';
+import React, { useState, useEffect } from "react";
+import { useUrlParams } from "../hooks/useUrlParams";
+import useLocalStorage from "../hooks/useLocalStorage";
+import QuestionCard from "./QuestionCard";
+import QuizResults from "./QuizResults";
+import WelcomeScreen from "./WelcomeScreen";
+import { checkSingleQuestion, calculateScore } from "../utils/quizLogic";
+
+// ⬅️ IMPORT LENGKAP (SUDAH DIBENARKAN)
+import { 
+  fetchQuizDataAndPrefs, 
+  generateHintAI, 
+  submitQuizScore, 
+  resetQuizHistory 
+} from "../services/backendApi";
+
+import { applyUserThemeToDocument } from "../utils/applyUserThemeToDocument";
 
 export default function QuizContainer() {
-    const { userId, tutorialId } = useUrlParams();
-    const storageKey = `LEARNCHECK_STATE_${userId}_${tutorialId}`;
-    const [quizState, setQuizState] = useLocalStorage(storageKey, null);
-    const [userPrefs, setUserPrefs] = useState({});
-    const [isLoading, setIsLoading] = useState(true);
-    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); 
-    const [isHintVisible, setIsHintVisible] = useState(false); 
-    const [showResults, setShowResults] = useState(false); 
-    const [isWelcomeScreen, setIsWelcomeScreen] = useState(true);
-    
-    const totalQuestions = quizState?.questions?.length || 0;
-    const currentQuestion = quizState?.questions?.[currentQuestionIndex];
-    const currentQuestionId = currentQuestion?.id;
-    
-    const isCompleted = quizState?.isCompleted || false; 
-    const isFirstQuestion = currentQuestionIndex === 0;
-    const isLastQuestion = currentQuestionIndex === totalQuestions - 1;
-    
-    const isCurrentQuestionSubmitted = quizState?.checkedStatus?.[currentQuestionId]?.submitted || false;
-    const isCurrentQuestionCorrect = quizState?.checkedStatus?.[currentQuestionId]?.isCorrect || false;
-    const isCurrentQuestionAnswered = (quizState?.answers?.[currentQuestionId]?.length || 0) > 0;
-    
-    const isAllQuestionsChecked = totalQuestions > 0 && 
+  const { userId, tutorialId } = useUrlParams();
+  const storageKey = `LEARNCHECK_STATE_${userId}_${tutorialId}`;
+
+  const [quizState, setQuizState] = useLocalStorage(storageKey, null);
+  const [userPrefs, setUserPrefs] = useState({});
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [isHintVisible, setIsHintVisible] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+  const [isWelcomeScreen, setIsWelcomeScreen] = useState(true);
+
+  const [aiHints, setAiHints] = useLocalStorage(
+    `AI_HINTS_${userId}_${tutorialId}`,
+    {}
+  );
+
+  const totalQuestions = quizState?.questions?.length || 0;
+  const currentQuestion = quizState?.questions?.[currentQuestionIndex];
+  const currentQuestionId = currentQuestion?.id;
+
+  const isSubmitted =
+    quizState?.checkedStatus?.[currentQuestionId]?.submitted || false;
+
+  const isCorrect =
+    quizState?.checkedStatus?.[currentQuestionId]?.isCorrect || false;
+
+  const isAnswered =
+    (quizState?.answers?.[currentQuestionId]?.length || 0) > 0;
+
+  const isLast =
+    currentQuestionIndex === totalQuestions - 1 &&
     Object.keys(quizState?.checkedStatus || {}).length === totalQuestions;
-    
 
-    const loadQuizData = async () => {
-        setIsLoading(true);
-        try {
-            const data = await fetchQuizDataAndPrefs(tutorialId, userId); 
-            
-            setUserPrefs(data.userPreferences); 
-            applyUserThemeToDocument(data.userPreferences);
+  // ================================
+  // LOAD QUIZ + USER PREFS
+  // ================================
+  const loadQuizData = async () => {
+    setIsLoading(true);
 
-             setQuizState({ 
-                questions: data.questions, 
-                userId, 
-                tutorialId, 
-                answers: {},
-                checkedStatus: {},
-                isCompleted: false, 
-                score: 0 
-            });
+    try {
+      const data = await fetchQuizDataAndPrefs(tutorialId, userId);
 
-        } catch (error) {
-            console.error("Gagal memuat data kuis:", error);
-            alert(`Gagal memuat kuis. Cek konsol.`); 
-        } finally {
-            setIsLoading(false);
-        }
-    };
+      applyUserThemeToDocument(data.userPreferences);
+      setUserPrefs(data.userPreferences);
 
-    useEffect(() => {
-        if (!quizState) {
-            loadQuizData();
-        } else {
-            setIsLoading(false);
-        }
-    }, [userId, tutorialId, quizState === null]); 
-
-    const handleAnswerSelect = (questionId, optionId) => {
-        if (isCurrentQuestionSubmitted || isLoading || !quizState) return; 
-
-        const currentAnswers = quizState.answers[questionId] || [];
-        const isSelected = currentAnswers.includes(optionId);
-        
-        const newAnswers = isSelected 
-            ? currentAnswers.filter(id => id !== optionId) 
-            : [...currentAnswers, optionId];
-        
-        setQuizState({
-            ...quizState,
-            answers: {
-                ...quizState.answers,
-                [questionId]: newAnswers,
-            }
-        });
-    };
-
-    const handleNext = () => {
-        if (currentQuestionIndex < totalQuestions - 1) {
-            setCurrentQuestionIndex(prevIndex => prevIndex + 1);
-            setIsHintVisible(false); 
-        }
-    };
-
-    const handlePrev = () => {
-        if (currentQuestionIndex > 0) {
-            setCurrentQuestionIndex(prevIndex => prevIndex - 1);
-            setIsHintVisible(false); 
-        }
-    };
-
-    const handleShowHint = () => {
-        setIsHintVisible(prev => !prev);
-    };
-    
-    //logika ngecek jawaban bener engga
-    const handleCheckAnswer = () => {
-        if (isCurrentQuestionSubmitted || isLoading || !currentQuestion) return;
-
-        const currentQuestionId = currentQuestion.id;
-        const currentAnswers = quizState.answers[currentQuestionId] || [];
-
-        const isCorrect = checkSingleQuestion(currentQuestion, currentAnswers);
-        
-        const newCheckedStatus = {
-            ...quizState.checkedStatus,
-            [currentQuestionId]: {
-                submitted: true,
-                isCorrect: isCorrect,
-                attemptCount: (quizState.checkedStatus?.[currentQuestionId]?.attemptCount || 0) + 1,
-            }
-        };
-        
-        setQuizState({
-            ...quizState,
-            checkedStatus: newCheckedStatus,
-        });
-
-        setIsHintVisible(false);
-        
-    };
-
-    const handleViewScore = () => {
-        if (!isCompleted) {
-            const results = calculateScore(quizState); 
-            setQuizState({
-                ...quizState,
-                isCompleted: true, 
-                score: results.score, 
-                correctCount: results.correctCount,
-            });
-        }
-        
-        setShowResults(true);
-    };
-
-    //logic button reset
-    const handleResetCurrentQuestion = () => {
-        const currentQuestionId = currentQuestion?.id;
-        if (!currentQuestionId) return;
-
-        const newAnswers = { ...quizState.answers };
-        const newCheckedStatus = { ...quizState.checkedStatus };
-
-        delete newAnswers[currentQuestionId];
-        delete newCheckedStatus[currentQuestionId];
-
-        setQuizState({
-            ...quizState,
-            answers: newAnswers,
-            checkedStatus: newCheckedStatus,
-        });
-
-        setIsHintVisible(false);
-    };
-
-    //logika button reset di tampilan skor akhir
-    const handleReset = () => {
-        const currentTheme = userPrefs.theme; 
-        
-        if (!window.confirm("Apakah Anda yakin ingin me-reset seluruh kuis? Jawaban Anda akan hilang.")) return;
-        
-        setQuizState(null); 
-        setCurrentQuestionIndex(0); 
-        setIsHintVisible(false); 
-        setShowResults(false);  
-        setIsWelcomeScreen(true);
-        setUserPrefs({ theme: currentTheme }); 
-    };
-
-    const handleExitToFirstQuestion = () => {
-        setCurrentQuestionIndex(0); 
-        setShowResults(false);      
-        setIsHintVisible(false);    
-    };
-
-    const handleStartQuiz = async () => {
-        if (!quizState) {
-            await loadQuizData(); 
-        }
-        setIsWelcomeScreen(false);
-    };
-
-
-    const renderStatusBadge = () => {
-       
-        if (!isCurrentQuestionSubmitted) return null; 
-
-        return (
-            <div className={`px-5 py-2 rounded-full text-sm font-semibold border-2 ml-auto
-                ${isCurrentQuestionCorrect
-                    ? "bg-[var(--green-secondary)] border-[var(--green-primary)] text-[var(--green-primary)]"
-                    : "bg-[var(--red-secondary)] border-[var(--red-primary)] text-[var(--red-primary)]"
-                }`}
-            >
-                {isCurrentQuestionCorrect ? "Benar" : "Salah"}
-            </div>
-        );
-    };
-
-    if (isLoading || !quizState || !currentQuestion) {
-        return (
-            <div className="min-h-40 flex items-center justify-center text-xl">
-                Memuat Asesmen...
-            </div>
-        );
+      setQuizState({
+        questions: data.questions,
+        userId,
+        tutorialId,
+        answers: {},
+        checkedStatus: {},
+        isCompleted: false,
+        score: 0,
+      });
+    } catch (err) {
+      console.error("LOAD QUIZ ERROR:", err);
+      alert("Gagal memuat kuis dari server.");
+    } finally {
+      setIsLoading(false);
     }
+  };
 
+  useEffect(() => {
+    if (!quizState) loadQuizData();
+    else setIsLoading(false);
+  }, [userId, tutorialId, quizState === null]);
 
-    //ini tampilan skor akhir
-    if (showResults) {
-        const finalScore = {
-            correct: quizState.correctCount || 0,
-            total: quizState.questions.length,
-            score: quizState.score || 0
-        };
-        return (
-            <QuizResults 
-                score={finalScore}
-                theme={userPrefs.theme}
-                onReset={handleReset} 
-                onExitToFirstQuestion={handleExitToFirstQuestion}
-            />
-        );
+  // ================================
+  // HANDLE ANSWER SELECT
+  // ================================
+  const handleAnswerSelect = (qId, optionId) => {
+    if (isSubmitted) return;
+
+    const curr = quizState.answers[qId] || [];
+    const updated = curr.includes(optionId)
+      ? curr.filter((id) => id !== optionId)
+      : [...curr, optionId];
+
+    setQuizState({
+      ...quizState,
+      answers: {
+        ...quizState.answers,
+        [qId]: updated,
+      },
+    });
+  };
+
+  // ================================
+  // HANDLE CHECK ANSWER + AI HINT
+  // ================================
+  const handleCheckAnswer = async () => {
+    if (isSubmitted || !isAnswered) return;
+
+    const selected = quizState.answers[currentQuestionId] || [];
+    const correct = checkSingleQuestion(currentQuestion, selected);
+
+    const newChecked = {
+      ...quizState.checkedStatus,
+      [currentQuestionId]: {
+        submitted: true,
+        isCorrect: correct,
+      },
+    };
+
+    setQuizState({
+      ...quizState,
+      checkedStatus: newChecked,
+    });
+
+    if (!correct && !aiHints[currentQuestionId]) {
+      try {
+        const hint = await generateHintAI(tutorialId, currentQuestion.question);
+
+        setAiHints({
+          ...aiHints,
+          [currentQuestionId]: hint,
+        });
+      } catch (err) {
+        console.error("AI Hint Error:", err);
+      }
     }
+  };
 
-    if (isWelcomeScreen) {
+  // ================================
+  // SCORE VIEW (UPDATED)
+  // ================================
+  const handleViewScore = () => {
+    const { score, correctCount } = calculateScore(quizState);
+
+    setQuizState({
+      ...quizState,
+      isCompleted: true,
+      score,
+    });
+
+    submitQuizScore(userId, tutorialId, score, totalQuestions);
+
+    setShowResults(true);
+  };
+
+  // ================================
+  // RESET PER-SOAL
+  // ================================
+  const resetCurrent = () => {
+    const newAnswers = { ...quizState.answers };
+    const newChecked = { ...quizState.checkedStatus };
+
+    delete newAnswers[currentQuestionId];
+    delete newChecked[currentQuestionId];
+
+    setQuizState({
+      ...quizState,
+      answers: newAnswers,
+      checkedStatus: newChecked,
+    });
+
+    setIsHintVisible(false);
+  };
+
+  // ================================
+  // RESET (LOCAL FULL)
+  // ================================
+  const resetAll = () => {
+    if (!window.confirm("Reset semua jawaban?")) return;
+
+    setQuizState(null);
+    setAiHints({});
+    setShowResults(false);
+    setCurrentQuestionIndex(0);
+    setIsWelcomeScreen(true);
+  };
+
+  // ================================
+  // 🔥 RESET BACKEND + LOCAL (handleReset)
+  // ================================
+  const handleReset = async () => {
+    const currentTheme = userPrefs.theme;
+
+    if (!window.confirm("Apakah Anda yakin ingin me-reset seluruh kuis? Soal baru akan digenerate.")) 
+      return;
+
+    // 🔥 hapus Redis di backend
+    await resetQuizHistory(tutorialId, userId);
+
+    // reset lokal
+    setQuizState(null);
+    setCurrentQuestionIndex(0);
+    setIsHintVisible(false);
+    setShowResults(false);
+    setIsWelcomeScreen(true);
+
+    // mempertahankan theme user
+    setUserPrefs({ theme: currentTheme });
+  };
+
+  // ================================
+  // UI OUTPUT
+  // ================================
+  if (isLoading || !quizState || !currentQuestion) {
     return (
-        <WelcomeScreen
-            tutorialTitle={quizState.tutorialId}
-            onStartQuiz={handleStartQuiz}
-            theme={userPrefs.theme}
-        />
+      <div className="min-h-40 flex items-center justify-center text-xl">
+        Memuat Asesmen...
+      </div>
     );
-}
-    const secondaryBtn = `
-        px-5 py-2.5 border-2 rounded-lg font-medium transition disabled:opacity-50
-        border-[var(--text-primary)] text-[var(--text-primary)]
-        hover:bg-[var(--bg-secondary)]
-    `;
+  }
 
-    const primaryBtn = `
-        px-6 py-2.5 bg-[var(--blue-primary)] text-white font-bold rounded-lg 
-        hover:brightness-110 transition disabled:bg-gray-500
-    `;
+  if (isWelcomeScreen) {
+    return (
+      <WelcomeScreen
+        tutorialTitle={quizState.tutorialId}
+        onStartQuiz={() => setIsWelcomeScreen(false)}
+      />
+    );
+  }
 
-    const resetBtn = `
-        px-5 py-2.5 bg-[var(--red-primary)] text-white font-semibold rounded-lg 
-        hover:brightness-110 transition flex items-center
-    `;
+  if (showResults) {
+    return (
+      <QuizResults
+        score={{
+          correct: quizState.correctCount,
+          total: quizState.questions.length,
+          score: quizState.score,
+        }}
+        onReset={resetAll}
+        onExitToFirstQuestion={() => setShowResults(false)}
+      />
+    );
+  }
 
-    // logika tombol aksi
-    let MainActionButton;
-    
-    // Logika tombol aksi yang berubah ubah
-    if (isCurrentQuestionSubmitted) {
-        MainActionButton = (
-            <button onClick={handleResetCurrentQuestion} className={resetBtn}>
-                <span className="mr-1">↻</span> Ulang
-            </button>
-        );
-    } else if (isCurrentQuestionAnswered) {
-        MainActionButton = (
-            <button onClick={handleCheckAnswer} className={primaryBtn}>
-                Periksa
-            </button>
-        );
-    } else {
-       MainActionButton = (
-            <button onClick={handleResetCurrentQuestion} className={resetBtn}>
-                <span className="mr-1">↻</span> Ulang
-            </button>
-        );
-    }
+  let ActionBtn;
+  if (isSubmitted) {
+    ActionBtn = (
+      <button
+        onClick={resetCurrent}
+        className="px-6 py-2.5 bg-red-600 text-white font-semibold rounded-lg"
+      >
+        ↻ Ulang
+      </button>
+    );
+  } else if (isAnswered) {
+    ActionBtn = (
+      <button
+        onClick={handleCheckAnswer}
+        className="px-6 py-2.5 bg-blue-600 text-white font-bold rounded-lg"
+      >
+        Periksa
+      </button>
+    );
+  } else {
+    ActionBtn = (
+      <button
+        disabled
+        className="px-6 py-2.5 bg-gray-400 text-white font-semibold rounded-lg"
+      >
+        Pilih Jawaban
+      </button>
+    );
+  }
 
-return (
-        <div className="min-h-screen py-6 bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-300">
+  return (
+    <div className="min-h-screen bg-[color:var(--bg-primary)] p-6 transition">
+      <div className="max-w-[var(--max-width-content)] mx-auto rounded-2xl shadow-lg bg-[color:var(--bg-secondary)] overflow-hidden">
+        
+        {/* Header */}
+        <div className="px-6 py-4 flex justify-between items-center border-b border-[color:var(--bg-primary)]/20">
+          <div className="text-xl font-bold text-[color:var(--text-primary)]">LearnCheck!</div>
+          <div className="text-md text-[color:var(--text-secondary)] opacity-70">{tutorialId}</div>
 
-            <div className="max-w-[var(--max-width-content)] w-full mx-auto px-4">
-
-                <div className="rounded-xl shadow-md overflow-hidden bg-[var(--bg-secondary)] border border-[var(--text-primary)]/20">
-
-                    {/* HEADER */}
-                    <div className="p-5 flex justify-between items-center border-b border-[var(--text-primary)]/20">
-
-                        <div className="flex items-center space-x-3">
-                            <img
-                                src="../../src/images/logo-learncheck.png"
-                                alt="LearnCheck Logo"
-                                className="w-12 h-12"
-                            />
-                            <div className="leading-tight">
-                                <span className="block text-2xl font-bold text-[var(--blue-primary)]">
-                                    LearnCheck!
-                                </span>
-                                <span className="block text-xs text-[var(--blue-primary)]">
-                                    Formative Assessment<br />Powered with AI
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="flex-1 text-center px-4">
-                            <p className="text-lg font-medium text-[var(--text-primary)]">
-                                {tutorialId}
-                            </p>
-                        </div>
-
-                        {renderStatusBadge()}
-                    </div>
-
-                {/* Progress bar */}
-                <div className="px-6 pt-6 flex justify-between items-center">
-                        <p className="text-sm font-medium text-[var(--text-secondary)] opacity-70">
-                            Question {currentQuestionIndex + 1} of {totalQuestions}
-                        </p>
-                        <div className="flex-1 max-w-xs ml-auto bg-[var(--text-primary)]/10 rounded-full h-2">
-                            <div
-                                className="bg-[var(--blue-primary)] h-2 rounded-full transition-all"
-                                style={{
-                                    width: `${((currentQuestionIndex + 1) / totalQuestions) * 100}%`
-                                }}
-                            />
-                        </div>
-                    </div>
-
-                {/* Question Content */}
-                <div className="pb-5 px-5 pt-3 border-b border-[var(--text-primary)]/20">
-                        <QuestionCard
-                            key={currentQuestion.id}
-                            questionData={currentQuestion}
-                            questionIndex={currentQuestionIndex + 1}
-                            selectedAnswers={quizState.answers[currentQuestion.id] || []}
-                            onSelect={handleAnswerSelect}
-                            isDisabled={isCurrentQuestionSubmitted}
-                            theme={userPrefs.theme}
-                            hintText={currentQuestion.pre_hint}
-                            isHintVisible={isHintVisible}
-                        />
-                    </div>
-
-                {/* Footer - HAPUS rounded-xl */}
-<div className="p-5">
-                        <div className="flex justify-between items-center">
-
-                            {/* LEFT BUTTONS */}
-                            <div className="flex items-center space-x-3">
-
-                                <button
-                                    onClick={handleShowHint}
-                                    className="px-5 py-2.5 bg-[var(--hint-button-yellow)] text-black rounded-lg font-semibold flex items-center space-x-2 hover:brightness-110 transition"
-                                    disabled={!currentQuestion.pre_hint}
-                                >
-                                    <span className="text-xl">💡</span>
-                                    <span>Petunjuk</span>
-                                </button>
-
-                                {isLastQuestion && isAllQuestionsChecked && (
-                                    <button
-                                        onClick={handleViewScore}
-                                        className="px-6 py-2.5 bg-purple-600 text-white font-bold rounded-lg shadow-md hover:brightness-110 transition"
-                                    >
-                                        Lihat Skor
-                                    </button>
-                                )}
-                            </div>
-
-                            {/* RIGHT BUTTONS */}
-                            <div className="flex items-center space-x-3">
-
-                                <button
-                                    onClick={handlePrev}
-                                    disabled={isFirstQuestion || isLoading}
-                                    className={secondaryBtn}
-                                >
-                                    &lt; Sebelumnya
-                                </button>
-
-                                <button
-                                    onClick={handleNext}
-                                    disabled={isLastQuestion || isLoading}
-                                    className={secondaryBtn}
-                                >
-                                    Selanjutnya &gt;
-                                </button>
-
-                                {MainActionButton}
-
-                            </div>
-                    </div>
-                </div>
-                
-            </div>
-            
+          {isSubmitted && (
+            <span className={`px-4 py-1 rounded-full text-sm font-semibold ${isCorrect ? "bg-green-600 text-white" : "bg-red-600 text-white"}`}>
+              {isCorrect ? "Benar" : "Salah"}
+            </span>
+          )}
         </div>
+
+        {/* Question */}
+        <div className="px-6 py-6">
+          <QuestionCard
+            key={currentQuestion.id}
+            questionData={currentQuestion}
+            questionIndex={currentQuestionIndex + 1}
+            selectedAnswers={quizState.answers[currentQuestion.id] || []}
+            onSelect={handleAnswerSelect}
+            isDisabled={isSubmitted}
+            hintText={currentQuestion.pre_hint}
+            isHintVisible={isHintVisible}
+            aiHint={aiHints[currentQuestionId]}
+          />
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 py-4 flex justify-between border-t border-[color:var(--bg-primary)]/20">
+          
+          <button onClick={() => setIsHintVisible(!isHintVisible)} className="px-5 py-2.5 bg-amber-300 rounded-lg font-semibold">
+            💡 Petunjuk
+          </button>
+
+          {isLast && (
+            <button onClick={handleViewScore} className="px-6 py-2 bg-purple-600 text-white font-bold rounded-lg">
+              Lihat Skor
+            </button>
+          )}
+
+          <div className="flex space-x-3">
+            <button onClick={() => setCurrentQuestionIndex(i => Math.max(0, i - 1))} disabled={currentQuestionIndex === 0}>
+              &lt; Sebelumnya
+            </button>
+
+            <button
+              onClick={() => setCurrentQuestionIndex(i => Math.min(totalQuestions - 1, i + 1))}
+              disabled={currentQuestionIndex === totalQuestions - 1}
+            >
+              Selanjutnya &gt;
+            </button>
+
+            {ActionBtn}
+          </div>
+        </div>
+      </div>
     </div>
-);
+  );
 }

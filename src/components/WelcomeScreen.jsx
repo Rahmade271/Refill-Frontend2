@@ -4,13 +4,13 @@ export default function WelcomeScreen({ tutorialTitle, onStartQuiz }) {
   return (
     <div
       className="min-h-screen flex items-center justify-center p-6
-      bg-[var(--bg-primary)] text-[var(--text-primary)] transition"
+      bg-[color:var(--bg-primary)] text-[color:var(--text-primary)] transition"
     >
       <div
         className="w-full max-w-[var(--max-width-card)]
         p-10 rounded-2xl shadow-xl
-        bg-[var(--bg-secondary)]
-        border border-[var(--text-primary)]/20
+        bg-[color:var(--bg-secondary)]
+        border border-[color:var(--bg-primary)]/20
         transition"
       >
         {/* LOGO + TITLE */}
@@ -26,8 +26,8 @@ export default function WelcomeScreen({ tutorialTitle, onStartQuiz }) {
                 cx="50"
                 cy="50"
                 r="45"
-                fill="var(--blue-primary)"
-                stroke="var(--blue-primary)"
+                fill="var(--color-blue-primary)"
+                stroke="var(--color-blue-primary)"
                 strokeWidth="3"
               />
               <path
@@ -39,16 +39,16 @@ export default function WelcomeScreen({ tutorialTitle, onStartQuiz }) {
               />
               <path
                 d="M50 70L45 80L55 80L50 70Z"
-                fill="var(--blue-primary)"
+                fill="var(--color-blue-primary)"
               />
             </svg>
           </div>
 
-          <h1 className="text-5xl font-bold mb-2 text-[var(--blue-primary)]">
+          <h1 className="text-5xl font-bold mb-2 text-[color:var(--color-blue-primary)]">
             LearnCheck!
           </h1>
 
-          <p className="text-lg font-semibold text-[var(--text-secondary)]">
+          <p className="text-lg font-semibold text-[color:var(--text-secondary)]">
             Formative Assessment Powered with AI
           </p>
         </div>
@@ -56,15 +56,15 @@ export default function WelcomeScreen({ tutorialTitle, onStartQuiz }) {
         {/* CARD SUBMODUL */}
         <div
           className="p-8 rounded-2xl shadow-sm mb-8
-          bg-[var(--bg-primary)]/10
-          border border-[var(--text-primary)]/20
+          bg-[color:var(--bg-primary)]/10
+          border border-[color:var(--bg-primary)]/20
           transition"
         >
-          <p className="text-center text-sm mb-3 text-[var(--text-primary)]/70">
+          <p className="text-center text-sm mb-3 text-[color:var(--text-primary)]/70">
             Submodul Pembelajaran
           </p>
 
-          <h2 className="text-center text-3xl font-semibold text-[var(--text-primary)]">
+          <h2 className="text-center text-3xl font-semibold text-[color:var(--text-primary)]">
             {tutorialTitle || "Kriteria Data untuk AI"}
           </h2>
         </div>
@@ -73,7 +73,7 @@ export default function WelcomeScreen({ tutorialTitle, onStartQuiz }) {
         <button
           onClick={onStartQuiz}
           className="w-full py-4 text-xl font-bold rounded-2xl
-          text-white bg-[var(--blue-primary)]
+          text-white bg-[color:var(--color-blue-primary)]
           hover:brightness-110 transition shadow"
         >
           Mulai Kuis
