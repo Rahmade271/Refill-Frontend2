@@ -1,48 +1,29 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
-export default function useLocalStorage(key, initialValue) {
-  // Helper untuk membaca safely dari localStorage
-  const readValue = () => {
-    if (typeof window === 'undefined') {
-      return initialValue;
-    }
+function useLocalStorage(key, initialValue, userId) {
+  const storageKey = userId ? `${key}_${userId}` : key;
+
+  const [storedValue, setStoredValue] = useState(() => {
     try {
-      const item = window.localStorage.getItem(key);
+      // Baca dari Local Storage saat inisialisasi
+      const item = window.localStorage.getItem(storageKey);
       return item ? JSON.parse(item) : initialValue;
     } catch (error) {
-      console.warn(`Error reading localStorage key "${key}":`, error);
+      console.error(`Error reading localStorage key "${storageKey}": `, error);
       return initialValue;
     }
-  };
-
-  // State untuk menyimpan value saat ini
-  const [storedValue, setStoredValue] = useState(readValue);
-
-  // Ref untuk melacak key terakhir agar kita bisa mendeteksi perubahan key
-  // tanpa memicu write operation yang salah
-  const keyRef = useRef(key);
+  });
 
   useEffect(() => {
-    // Jika key berubah (misal ganti user), BACA ULANG dari storage
-    // Jangan biarkan state lama tersimpan ke key baru!
-    if (keyRef.current !== key) {
-      const newValue = readValue();
-      setStoredValue(newValue);
-      keyRef.current = key;
+    try {
+      window.localStorage.setItem(key, JSON.stringify(storedValue));
+    } catch (error) {
+      console.error(`Error writing localStorage key "${storageKey}": `, error);
     }
-  }, [key]);
-
-  useEffect(() => {
-    // Simpan ke localStorage hanya jika key tidak berubah di tengah jalan
-    // dan pastikan kita menyimpan value yang benar untuk key saat ini
-    if (keyRef.current === key) {
-      try {
-        window.localStorage.setItem(key, JSON.stringify(storedValue));
-      } catch (error) {
-        console.warn(`Error writing localStorage key "${key}":`, error);
-      }
-    }
-  }, [key, storedValue]);
+  }, [storageKey, storedValue]);
 
   return [storedValue, setStoredValue];
 }
+
+export default useLocalStorage;
+

@@ -1,10 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import QuizContainer from "./components/QuizContainer";
-// Hapus import applyUserThemeToDocument karena App.jsx tidak boleh mengatur tema global
+import { applyUserThemeToDocument } from "./utils/applyUserThemeToDocument";
 
 export default function App() {
-  // Hapus useEffect yang memaksa theme light.
-  // Biarkan QuizContainer yang mengatur tema berdasarkan user yang aktif.
+  useEffect(() => {
+    applyUserThemeToDocument({
+      theme: "light",
+      fontStyle: "default",
+      fontSize: "medium",
+      layoutWidth: "fullWidth",
+      userThemeKey: "user-2", 
+    });
+  }, []);
 
   return (
     <div className="min-h-screen">

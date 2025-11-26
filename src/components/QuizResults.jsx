@@ -22,7 +22,10 @@ export default function QuizResults({
 
   const logoSrc = theme === "dark" ? logoDark : logoLight;
   const scoreColor = isPassing ? "var(--green-primary)" : "var(--red-primary)";
-
+  const isDark = theme === "dark";
+  const titleColor = isDark
+  ? "text-[var(--text-primary)]"
+  : "text-[var(--blue-primary)]";
 
   return (
     <div
@@ -40,16 +43,16 @@ export default function QuizResults({
         >
           <div className="flex items-center">
             <img
-                                src={logoSrc}
-                                alt="LearnCheck Logo"
-                                className="w-18 h-18"
-                            />
+                src={logoSrc}
+                alt="LearnCheck Logo"
+                className="w-18 h-18"
+            />
 
             <div className="leading-tight">
-              <h1 className="text-xl font-bold text-[var(--blue-primary)]">
+              <h1 className={`text-xl font-bold ${titleColor}`}>
                 LearnCheck!
               </h1>
-              <p className="text-xs text-[var(--text-secondary)] opacity-70">
+              <p className={`text-xs ${titleColor}`}>
                 Formative Assessment <br /> Powered with AI
               </p>
             </div>
