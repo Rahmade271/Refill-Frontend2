@@ -1,7 +1,9 @@
 import React from "react";
 import logoLight from "../images/logo-light-mode.png";
+import logoDark from "../images/logo-dark-mode.png";
 
 export default function QuizResults({
+  theme,
   score,
   onReset,
   onExitToFirstQuestion,
@@ -16,8 +18,11 @@ export default function QuizResults({
 
   const radius = 85;
   const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset =
-    circumference - (percentage / 100) * circumference;
+  const strokeDashoffset = circumference - (percentage / 100) * circumference;
+
+  const logoSrc = theme === "dark" ? logoDark : logoLight;
+  const scoreColor = isPassing ? "var(--green-primary)" : "var(--red-primary)";
+
 
   return (
     <div
@@ -35,7 +40,7 @@ export default function QuizResults({
         >
           <div className="flex items-center">
             <img
-                                src={logoLight}
+                                src={logoSrc}
                                 alt="LearnCheck Logo"
                                 className="w-18 h-18"
                             />
@@ -64,7 +69,6 @@ export default function QuizResults({
             Anda sudah menjawab seluruh pertanyaan.
           </p>
 
-          {/* TWO-COLUMN RESULT CARD */}
           <div
             className="p-10 rounded-2xl border-2 shadow-sm mb-8
                        bg-[var(--bg-primary)]/10
@@ -103,11 +107,7 @@ export default function QuizResults({
                       cx="112"
                       cy="112"
                       r={radius}
-                      stroke={
-                        isPassing
-                          ? "var(--green-primary)"
-                          : "var(--red-primary)"
-                      }
+                      stroke={scoreColor}
                       strokeWidth="8"
                       fill="none"
                       strokeDasharray={circumference}

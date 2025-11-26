@@ -5,9 +5,8 @@ export function useUrlParams() {
   return useMemo(() => {
     const searchParams = new URLSearchParams(window.location.search);
 
-    // Sesuai iFrame Dicoding:
-    const userId = searchParams.get('user');          // BUKAN user_id
-    const tutorialId = searchParams.get('tutorial');  // BUKAN tutorial_id
+    const userId = searchParams.get('user');          
+    const tutorialId = searchParams.get('tutorial');  
 
     if (!userId || !tutorialId) {
       console.warn("Missing ?user= & ?tutorial= from URL iframe.");

@@ -18,10 +18,10 @@ export default function WelcomeScreen({ tutorialTitle, onStartQuiz }) {
         <div className="flex flex-col items-center mb-10">
           <div className="mb-2">
             <img
-                                src={logoWelcome}
-                                alt="LearnCheck Logo"
-                                className="w-30 h-30"
-                            />
+              src={logoWelcome}
+              alt="LearnCheck Logo"
+              className="w-30 h-30"
+            />
           </div>
 
           <h1 className="text-5xl font-bold mb-2 text-[var(--blue-primary)]">
@@ -45,7 +45,7 @@ export default function WelcomeScreen({ tutorialTitle, onStartQuiz }) {
           </p>
 
           <h2 className="text-center text-3xl font-semibold text-[var(--text-primary)]">
-            {tutorialTitle || "Kriteria Data untuk AI"}
+            {tutorialTitle || "Submodul Pembelajaran"}
           </h2>
         </div>
 

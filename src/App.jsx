@@ -1,20 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import QuizContainer from "./components/QuizContainer";
-import { applyUserThemeToDocument } from "./utils/applyUserThemeToDocument";
+// Hapus import applyUserThemeToDocument karena App.jsx tidak boleh mengatur tema global
 
 export default function App() {
-  // ===============================
-  // DEFAULT THEME → supaya WelcomeScreen tidak putih
-  // ===============================
-  useEffect(() => {
-    applyUserThemeToDocument({
-      theme: "light",
-      fontStyle: "default",
-      fontSize: "medium",
-      layoutWidth: "fullWidth",
-      userThemeKey: "user-2", // default safe light theme
-    });
-  }, []);
+  // Hapus useEffect yang memaksa theme light.
+  // Biarkan QuizContainer yang mengatur tema berdasarkan user yang aktif.
 
   return (
     <div className="min-h-screen">

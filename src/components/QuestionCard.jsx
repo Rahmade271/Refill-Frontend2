@@ -16,8 +16,6 @@ export default function QuestionCard({
     isHintVisible 
 }) {
 
-
-
     
     const renderConsolidatedFeedback = () => {
         if (!isDisabled) return null;
@@ -88,7 +86,7 @@ export default function QuestionCard({
                         {aiHint}
                     </p>
                 </div>
-                )};
+                )}
                 
             </div>
         );
@@ -164,7 +162,7 @@ export default function QuestionCard({
                 ">
                     <p className="font-bold flex items-center mb-2">
                         <img
-                            src="../../src/images/hint-logo.png"
+                            src={hintLogo}
                             alt="Hint Logo"
                             className="w-6 h-6 mr-2"
                         />
