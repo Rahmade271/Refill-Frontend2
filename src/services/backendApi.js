@@ -2,23 +2,19 @@ import { MOCK_QUIZ_DATA } from "../mock/quizData";
 import { MOCK_USER_PREFS } from "../mock/userPrefs";
 
 // === KONFIGURASI URL ===
-// Ganti URL ini sesuai dengan link backend Railway kamu
 const BASE_BE_URL = "https://refill-backend2-production.up.railway.app"; 
+const HINT_BASE_URL = "https://hint-api-production.up.railway.app";
 
-// NOTE PENTING:
-// Di kode backend (server.js) kamu, route-nya tertulis app.post("/quiz/generate"). 
-// Tapi di FE lama tertulis "/assessment/quiz/generate".
-// Jika nanti error 404, coba tambahkan "/assessment" setelah BASE_BE_URL.
-// Contoh: `${BASE_BE_URL}/assessment/quiz/generate`
-
+// URL ASSESSMENT / GENERATOR
+// NOTE: Jika error 404, pastikan prefix "/assessment" sesuai dengan route di Backend (server.js)
 const QUIZ_GENERATE_URL = `${BASE_BE_URL}/assessment/quiz/generate`;
 const QUIZ_RESET_URL    = `${BASE_BE_URL}/assessment/quiz/reset`;
 const QUIZ_SUBMIT_URL   = `${BASE_BE_URL}/assessment/quiz/submit`;
 
-// Untuk Hint, karena di BE terpisah service-nya (port 3002), 
-// jika kamu belum deploy hint-service, fitur hint mungkin error. 
-// Kita arahkan sementara ke URL yang sama atau biarkan localhost untuk dev.
-const HINT_GENERATE_URL = `${BASE_BE_URL}/assessment/hint/generate`;
+// URL HINT SERVICE
+// Mengarah langsung ke microservice hint di Railway
+// Endpoint di server.js hint-service adalah "/hint/generate"
+const HINT_GENERATE_URL = `${HINT_BASE_URL}/hint/generate`;
 
 
 //INI BUAT GENERATE SOAL 
@@ -44,18 +40,18 @@ export const fetchQuizDataAndPrefs = async (tutorialId, userId) => {
     return {
       questions: json.questions,
       userPreferences: {
-        theme: json.userPreferences.theme,
-        fontStyle: json.userPreferences.fontStyle,
-        fontSize: json.userPreferences.fontSize,
-        layoutWidth: json.userPreferences.layoutWidth,
+        theme: json.userPreferences?.theme || 'light',
+        fontStyle: json.userPreferences?.fontStyle || 'default',
+        fontSize: json.userPreferences?.fontSize || 'medium',
+        layoutWidth: json.userPreferences?.layoutWidth || 'fullWidth',
       },
       metadata: {
-        tutorial_id: json.metadata.tutorial_id,
-        user_id: json.metadata.user_id,
-        startIndex: json.metadata.startIndex,
-        count: json.metadata.count,
-        contextText: json.metadata.contextText,
-        moduleTitle: json.metadata.moduleTitle 
+        tutorial_id: json.metadata?.tutorial_id,
+        user_id: json.metadata?.user_id,
+        startIndex: json.metadata?.startIndex,
+        count: json.metadata?.count,
+        contextText: json.metadata?.contextText,
+        moduleTitle: json.metadata?.moduleTitle || "Submodul Pembelajaran"
       }
     };
   } catch (err) {
@@ -77,7 +73,7 @@ export const fetchQuizDataAndPrefs = async (tutorialId, userId) => {
 };
 
 
-//INI BUAT HINT YANG PORT 3002
+//INI BUAT HINT YANG PORT 3002 (Sekarang di HINT_BASE_URL)
 export const generateHintAI = async ({
   tutorialId,
   qid,
@@ -103,7 +99,8 @@ export const generateHintAI = async ({
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
     const json = await response.json();
-    return json.data.hint;
+    // Handle struktur response hint, kadang dibungkus "data" kadang langsung "hint"
+    return json.hint || json.data?.hint;
 
   } catch (err) {
     console.error("AI Hint gagal. Menggunakan MOCK hint.", err);
