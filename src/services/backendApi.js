@@ -14,7 +14,7 @@ const QUIZ_SUBMIT_URL   = `${BASE_BE_URL}/assessment/quiz/submit`;
 // URL HINT SERVICE
 // Mengarah langsung ke microservice hint di Railway
 // Endpoint di server.js hint-service adalah "/hint/generate"
-const HINT_GENERATE_URL = `${HINT_BASE_URL}/hint/generate`;
+const HINT_GENERATE_URL = `https://hint-api-production.up.railway.app/hint/generate`;
 
 
 //INI BUAT GENERATE SOAL 
