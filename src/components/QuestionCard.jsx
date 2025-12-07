@@ -10,7 +10,7 @@ export default function QuestionCard({
   selectedAnswers,
   onSelect,
   isDisabled,
-  theme,
+  theme,       
   hintText,
   aiHint,
   isHintVisible,
@@ -20,7 +20,9 @@ export default function QuestionCard({
   const renderConsolidatedFeedback = () => {
     if (!isDisabled) return null;
 
-    const baseClasses = `mt-6 p-4 sm:p-6 rounded-xl border-1`;
+    const baseClasses = `
+      mt-6 p-5 sm:p-6 rounded-xl border-1
+    `;
 
     // JAWABAN BENAR
     if (isCorrectOverall) {
@@ -28,14 +30,20 @@ export default function QuestionCard({
         <div
           className={`
             ${baseClasses}
-            bg-[var(--green-secondary)] border-[var(--green-primary)]
+            bg-[var(--green-secondary)]
+            border-[var(--green-primary)]
             text-[var(--green-primary)]
           `}
         >
-          <p className="font-bold flex items-center mb-2 font-subtitle sm:font-heading">
-            <img src={correctLogo} alt="Jawaban benar" className="w-6 h-6 sm:w-8 sm:h-8 mr-2" />
+          <p className="font-bold flex items-center mb-3 font-subtitle sm:font-heading">
+            <img
+              src={correctLogo}
+              alt="Jawaban benar"
+              className="w-6 h-6 sm:w-8 sm:h-8"
+            />
             <span>Benar! Kerja bagus!</span>
           </p>
+
           <p className="font-body leading-relaxed text-[var(--text-primary)] text-sm sm:text-base">
             {questionData.feedback}
           </p>
@@ -48,36 +56,43 @@ export default function QuestionCard({
       <div
         className={`
           ${baseClasses}
-          bg-[var(--red-secondary)] border-[var(--red-primary)]
+          bg-[var(--red-secondary)]
+          border-[var(--red-primary)]
           text-[var(--red-primary)]
         `}
       >
-        <p className="font-bold flex items-center mb-2 font-subtitle sm:font-heading">
-          <img src={wrongLogo} alt="Jawaban salah" className="w-6 h-6 sm:w-8 sm:h-8 mr-2" />
+        <p className="font-bold flex items-center mb-3 font-subtitle sm:font-heading">
+          <img
+            src={wrongLogo}
+            alt="Jawaban salah"
+            className="w-6 h-6 sm:w-8 sm:h-8 mr-2"
+          />
           <span>Salah! Coba lagi!</span>
         </p>
-        
-        {/* FIX: Margin left dihapus di mobile (ml-0), ada di sm (ml-10) */}
-        <p className="font-body leading-relaxed mb-4 ml-0 sm:ml-10 text-[var(--text-primary)] text-sm sm:text-base">
+
+        <p className="font-body leading-relaxed mb-4 ml-0 sm:ml-10 text-[var(--text-primary)]">
           {questionData.feedback}
         </p>
 
-        {/* AI HINT */}
+        {/* HINT AI KETIKA JAWABAN SALAH */}
         {aiHint && (
           <div
             className={`
-              mt-3 p-4 rounded-lg border-1 
-              ml-0 sm:ml-10 
+              mt-3 p-4 sm:p-5 rounded-lg border-1 ml-0 sm:ml-10 pl-3 sm:pl-5
               bg-[var(--yellow-secondary)]
               border-[var(--yellow-primary)]
               text-[var(--yellow-primary)]
             `}
           >
-            <p className="font-bold flex items-center mb-2 font-body">
-              <img src={hintLogo} alt="Hint Logo" className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
-              <span>Petunjuk AI</span>
+            <p className="font-bold flex items-center mb-2 font-body sm:font-body">
+              <img
+                src={hintLogo}
+                alt="Hint Logo"
+                className="w-6 h-6 mr-2"
+              />
+              <span>Petunjuk</span>
             </p>
-            <p className="font-body leading-relaxed pl-0 sm:pl-8 text-[var(--text-primary)] text-sm sm:text-base">
+            <p className="font-body leading-relaxed pl-8 text-[var(--text-primary)]">
               {aiHint}
             </p>
           </div>
@@ -87,9 +102,19 @@ export default function QuestionCard({
   };
 
   return (
-    <div className="w-full pt-2 sm:pt-5">
+    <div
+      className=
+       "w-full pt-2 sm:pt-5">
+    
       {/* PERTANYAAN */}
-      <p className="font-body font-medium mb-4 sm:mb-6 text-[var(--text-primary)] text-sm sm:text-base">
+      <p
+        className={`
+          font-body sm:font-body lg:font-body
+          font-medium mb-5 sm:mb-6
+          text-[var(--text-primary)]
+         
+        `}
+      >
         {questionIndex}. {questionData.question}
       </p>
 
@@ -97,10 +122,10 @@ export default function QuestionCard({
       <div className="space-y-3 sm:space-y-4">
         {questionData.options.map((option) => {
           const isSelected = selectedAnswers.includes(option.id);
-          
+
           let optionStyles = `
-            border-1 rounded-lg 
-            font-body text-sm sm:text-base
+            border-1 rounded-lg
+            font-body
             text-[var(--text-primary)]
             bg-[var(--bg-secondary)]
             transition-all
@@ -126,16 +151,28 @@ export default function QuestionCard({
           return (
             <label
               key={option.id}
-              className={`flex items-start sm:items-center gap-3 p-3 sm:p-4 cursor-pointer ${optionStyles}`}
+              className={`
+                flex items-center gap-3
+                p-3 sm:p-4
+                cursor-pointer
+                ${optionStyles}
+              `}
             >
               <input
                 type="checkbox"
                 checked={isSelected}
                 disabled={isDisabled}
                 onChange={() => onSelect(questionData.id, option.id)}
-                className="mt-1 sm:mt-0.5 h-4 w-4 sm:h-5 sm:w-5 rounded border-gray-300 text-[var(--blue-primary)] focus:ring-[var(--blue-primary)]"
+                className="
+                  mt-0.5 h-4 w-4 sm:h-5 sm:w-5
+                  rounded border-gray-300
+                  text-[var(--blue-primary)]
+                  focus:ring-[var(--blue-primary)]
+                "
               />
-              <span className="flex-1 leading-relaxed">{option.text}</span>
+              <span className="flex-1 leading-relaxed">
+                {option.text}
+              </span>
             </label>
           );
         })}
@@ -146,23 +183,26 @@ export default function QuestionCard({
         {renderConsolidatedFeedback()}
       </div>
 
+
       {/* HINT MANUAL (TOMBOL PETUNJUK) */}
       {isHintVisible && hintText && (
         <div
-          className={`
-            mt-4 sm:mt-6 p-4 sm:p-6 rounded-lg border-1
+          className="
+            mt-6 p-5 sm:p-6 rounded-lg border-1
             bg-[var(--yellow-secondary)]
             border-[var(--yellow-primary)]
             text-[var(--yellow-primary)]
-          `}
+          "
         >
-          <p className="font-bold flex items-center mb-2 font-body">
-            <img src={hintLogo} alt="Hint Logo" className="w-5 h-5 sm:w-6 sm:h-6 mr-3" />
+          <p className="font-bold flex items-center mb-2 font-body sm:font-body">
+            <img
+              src={hintLogo}
+              alt="Hint Logo"
+              className="w-6 h-6 mr-3"
+            />
             <span>Petunjuk</span>
           </p>
-          
-          {/* FIX: Margin left dihapus di mobile (ml-0), ada di sm (ml-9) */}
-          <p className="font-body leading-relaxed ml-0 sm:ml-9 text-[var(--text-primary)] text-sm sm:text-base">
+          <p className="font-body leading-relaxed ml-0 sm:ml-9 text-[var(--text-primary)]">
             {hintText}
           </p>
         </div>

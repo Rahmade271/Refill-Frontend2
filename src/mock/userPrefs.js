@@ -2,8 +2,8 @@
 
 export const MOCK_USER_PREFS = {
     layoutWidth: 'fullWidth', 
-    layoutWidth: 'mediumWidth', 
+    //layoutWidth: 'mediumWidth', 
     fontStyle: 'default',
-    theme: 'light', 
+    theme: 'dark', 
     fontSize: 'medium',
 };
