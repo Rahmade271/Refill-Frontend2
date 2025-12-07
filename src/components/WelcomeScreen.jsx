@@ -10,21 +10,24 @@ export default function WelcomeScreen({ tutorialTitle, onStartQuiz, userPrefs })
         bg-[var(--bg-primary)] text-[var(--text-primary)]
         font-[var(--font-primary)]
         transition-colors duration-300
+        /* PENTING: Padding vertikal agar konsisten dengan QuizContainer */
+        py-8 sm:py-12
       "
     >
-      {/* UPDATE FIX: Wrapper diubah menjadi fluid dengan max-width */}
-      <div className="max-w-[var(--max-width-card)] w-full mx-auto px-4 sm:px-6">
+      {/* WRAPPER: Struktur sama persis dengan QuizContainer */}
+      <div className="w-full px-4 sm:px-6">
+        
+        {/* CARD: lc-card + w-full + mx-auto memastikan ukuran konsisten */}
         <div
           className="
-            lc-card
-            p-6 sm:p-8 lg:p-10
+            lc-card w-full mx-auto
             rounded-2xl shadow-xl
             border-2 border-[var(--text-primary)]/20
             transition-all duration-300
           "
         >
           {/* LOGO + BRAND */}
-          <div className="flex flex-col items-center mb-3 sm:mb-5 text-center">
+          <div className="flex flex-col items-center mb-3 sm:mb-5 text-center mt-2 sm:mt-4">
             <div className="relative mb-0 sm:mb-0">
               <div className="absolute inset-0 bg-[var(--blue-primary)]/20 rounded-full blur-2xl animate-pulse"></div>
               <img
@@ -82,6 +85,7 @@ export default function WelcomeScreen({ tutorialTitle, onStartQuiz, userPrefs })
               shadow-md
               relative overflow-hidden
               group
+              mb-2 sm:mb-4
             "
           >
             <span className="relative z-10 flex items-center justify-center gap-2">
@@ -92,7 +96,7 @@ export default function WelcomeScreen({ tutorialTitle, onStartQuiz, userPrefs })
           </button>
 
           {/* FOOTER NOTE */}
-          <p className="text-center font-mini text-[var(--text-primary)]/50 mt-6">
+          <p className="text-center font-mini text-[var(--text-primary)]/50 mt-4 mb-2">
             Klik tombol di atas untuk memulai kuis pembelajaran
           </p>
         </div>
