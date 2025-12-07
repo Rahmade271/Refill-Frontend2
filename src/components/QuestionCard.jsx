@@ -61,11 +61,11 @@ export default function QuestionCard({
           text-[var(--red-primary)]
         `}
       >
-        <p className="font-bold flex items-center mb-3 font-subtitle sm:font-heading">
+        <p className="font-bold flex items-start sm:items-center items-center mb-3 font-subtitle sm:font-heading">
           <img
             src={wrongLogo}
             alt="Jawaban salah"
-            className="w-6 h-6 sm:w-8 sm:h-8 mr-2"
+            className="w-6 h-6 sm:w-8 sm:h-8 mr-2 mt-[3px]"
           />
           <span>Salah! Coba lagi!</span>
         </p>
