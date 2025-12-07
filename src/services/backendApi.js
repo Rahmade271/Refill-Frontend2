@@ -4,7 +4,7 @@ import { MOCK_USER_PREFS } from "../mock/userPrefs";
 const QUIZ_GENERATE_URL = import.meta.env.VITE_QUIZ_GENERATE_URL;
 const HINT_GENERATE_URL = import.meta.env.VITE_HINT_GENERATE_URL;
 const RESET_ALL_URL = import.meta.env.VITE_RESET_ALL_URL;
-
+/* jflskjflksjf */
 
 //INI BUAT GENERATE SOAL 
 export const fetchQuizDataAndPrefs = async (tutorialId, userId) => {
