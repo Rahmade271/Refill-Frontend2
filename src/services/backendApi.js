@@ -1,9 +1,9 @@
 import { MOCK_QUIZ_DATA } from "../mock/quizData"; 
 import { MOCK_USER_PREFS } from "../mock/userPrefs"; 
 
-const QUIZ_GENERATE_URL = "https://refill-backend2-production.up.railway.app/assessment/quiz/generate"; //ini sekaligus untuk reset, beda body aja
-const HINT_GENERATE_URL = "https://hint-api-production.up.railway.app/hint/generate";
-const RESET_ALL_URL = "https://refill-backend2-production.up.railway.app/assessment/quiz/reset"
+const QUIZ_GENERATE_URL = import.meta.env.VITE_QUIZ_GENERATE_URL;
+const HINT_GENERATE_URL = import.meta.env.VITE_HINT_GENERATE_URL;
+const RESET_ALL_URL = import.meta.env.VITE_RESET_ALL_URL;
 
 
 //INI BUAT GENERATE SOAL 

@@ -15,7 +15,6 @@
   --text-light-primary: #364153;
   --text-light-secondary: #000000;
   --text-light-terniary: rgba(54, 65, 83, 0.5);
-
   --blue-light-secondary: #cee4ff;
   --green-light-primary: #f0fdf4;
   --red-light-primary: #fff1f2;
@@ -26,19 +25,29 @@
   --bg-dark-secondary: #1e2939;
   --text-dark-primary: #d1d5dc;
   --text-dark-secondary: #ffffff;
-
   --green-dark-primary: rgb(0 167 65 / 0.2);
   --red-dark-primary: rgb(255 91 106 / 0.2);
 
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-
   --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
+  --font-open-dyslexic: var(--font-sans);
 
-  --font-open-dyslexic: var(--font-mono);
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
 }
 
 html {
@@ -50,13 +59,10 @@ html {
 
   --blue-primary: var(--color-blue-primary);
   --blue-secondary: var(--blue-light-secondary);
-
   --green-primary: var(--color-green-primary);
   --green-secondary: var(--green-light-primary);
-
   --red-primary: var(--color-red-primary);
   --red-secondary: var(--red-light-primary);
-
   --yellow-primary: var(--color-yellow-primary);
   --yellow-secondary: var(--yellow-light-secondary);
   --hint-button-yellow: var(--color-hint-button-yellow);
@@ -64,25 +70,28 @@ html {
   --font-primary: var(--font-sans);
   --font-size-content: 1rem;
 
-  --max-width-content: 800px;
-  --max-width-card: 500px;
+  --font-title: var(--text-3xl);
+  --font-subtitle: var(--text-xl);
+  --font-heading: var(--text-2xl);
+  --font-body: var(--text-base);
+  --font-mini: var(--text-xs);
+
+  --card-padding-mobile: 1rem;
+  --card-padding-tablet: 1.5rem;
+  --card-padding-desktop: 2rem;
 }
 
 html[data-theme="dark"] {
   --bg-primary: var(--bg-dark-primary);
   --bg-secondary: var(--bg-dark-secondary);
-
   --text-primary: var(--text-dark-primary);
   --text-secondary: var(--text-dark-secondary);
 
   --blue-secondary: var(--color-blue-primary);
-
   --green-primary: var(--color-green-primary);
   --green-secondary: var(--green-dark-primary);
-
   --red-primary: var(--color-red-primary);
   --red-secondary: var(--red-dark-primary);
-
   --yellow-secondary: var(--yellow-light-secondary);
 }
 
@@ -99,25 +108,56 @@ html[data-font="open-dyslexic"] {
 }
 
 html[data-size="small"] {
-  --font-size-content: 0.875rem;
+  --font-size-content: var(--text-sm);
+  --font-title: var(--text-2xl);
+  --font-subtitle: var(--text-lg);
+  --font-heading: var(--text-xl);
+  --font-body: var(--text-sm);
+  --font-mini: var(--text-xs);
 }
 
 html[data-size="medium"] {
-  --font-size-content: 1rem;
+  --font-size-content: var(--text-base);
+  --font-title: var(--text-3xl);
+  --font-subtitle: var(--text-xl);
+  --font-heading: var(--text-2xl);
+  --font-body: var(--text-base);
+  --font-mini: var(--text-xs);
 }
 
 html[data-size="large"] {
-  --font-size-content: 1.125rem;
+  --font-size-content: var(--text-lg);
+  --font-title: var(--text-4xl);
+  --font-subtitle: var(--text-2xl);
+  --font-heading: var(--text-3xl);
+  --font-body: var(--text-lg);
+  --font-mini: var(--text-sm);
 }
 
+/* === REVISI RESPONSIVE LAYOUT WIDTH === */
 html[data-width="mediumWidth"] {
-  --max-width-content: 500px;
-  --max-width-card: 500px;
+  /* Menggunakan 0px sebagai batas bawah clamp agar responsif di layar <300px */
+  --max-width-content: clamp(0px, 90vw, 600px);
+  --max-width-card: clamp(0px, 95vw, 600px);
+
+  --card-padding-mobile: 1rem;
+  --card-padding-tablet: 1.5rem;
+  --card-padding-desktop: 2rem;
 }
 
 html[data-width="fullWidth"] {
-  --max-width-content: 800px;
-  --max-width-card: 800px;
+  /* Menggunakan 0px sebagai batas bawah clamp agar responsif di layar <320px */
+  --max-width-content: clamp(0px, 92vw, 900px);
+  --max-width-card: clamp(0px, 95vw, 900px);
+
+  --card-padding-mobile: 1rem;
+  --card-padding-tablet: 1.5rem;
+  --card-padding-desktop: 2.5rem;
+}
+
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 body {
@@ -130,10 +170,257 @@ body {
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
+#root {
+  min-height: 100vh;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+
 .content-text {
   font-size: var(--font-size-content);
 }
 
-code {
-  font-family: var(--font-mono);
+.font-title {
+  font-size: var(--font-title);
+}
+.font-subtitle {
+  font-size: var(--font-subtitle);
+}
+.font-heading {
+  font-size: var(--font-heading);
+}
+.font-body {
+  font-size: var(--font-body);
+}
+.font-mini {
+  font-size: var(--font-mini);
+}
+
+/* CARD STYLING */
+.lc-card {
+  width: 100%;
+  max-width: var(--max-width-card);
+  margin-left: auto;
+  margin-right: auto;
+  background-color: var(--bg-secondary);
+  border-radius: 1.5rem;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.45);
+  border: 1px solid rgba(15, 23, 42, 0.4);
+  padding: var(--card-padding-mobile);
+}
+
+/* SAFETY: Mencegah gambar/media keluar dari card */
+.lc-card img,
+.lc-card svg,
+.lc-card video {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (min-width: 640px) {
+  .lc-card {
+    padding: var(--card-padding-tablet);
+  }
+}
+
+@media (min-width: 1024px) {
+  .lc-card {
+    padding: var(--card-padding-desktop);
+  }
+}
+
+.feedback-container > * {
+  max-width: var(--max-width-content);
+  overflow-wrap: break-word;
+}
+
+/* ========
+   HEADER RESPONSIVE FOR MEDIUMWIDTH
+   ======== */
+html[data-width="mediumWidth"] .lc-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "logo badge"
+    "title title";
+  row-gap: 0.5rem;
+}
+
+/* child 1 = logo+teks */
+html[data-width="mediumWidth"] .lc-header > :nth-child(1) {
+  grid-area: logo;
+}
+
+/* child 2 = title */
+html[data-width="mediumWidth"] .lc-header > :nth-child(2) {
+  grid-area: title;
+  text-align: center !important;
+  margin-top: 0.7rem;
+}
+
+/* child 3 = badge status */
+html[data-width="mediumWidth"] .lc-header > :nth-child(3) {
+  grid-area: badge;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ===========================
+   FOOTER RESPONSIVE (FINAL - STRICT EQUAL WIDTH)
+   =========================== */
+
+/* --- 1. BASE LAYOUT (MOBILE / HP) --- */
+.footer-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  align-items: center;
+}
+
+/* === BARIS 1: Navigasi (Prev & Next) === */
+.footer-navigation {
+  display: flex;
+  order: 1; 
+  width: 100%;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+/* FIX: Paksa tombol Prev & Next berbagi lebar rata 50:50 */
+.footer-navigation > button {
+  flex-grow: 1 !important;
+  flex-basis: 0 !important; /* KUNCI: Abaikan panjang teks */
+  width: 0 !important;      /* KUNCI: Reset width */
+  min-width: 0 !important;  
+  max-width: 100%;
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis; 
+}
+
+/* Sembunyikan tombol Desktop di Mobile */
+.main-action-fullwidth {
+  display: none !important; 
+}
+
+
+/* === BARIS 2: Hint & Action Mobile (Petunjuk & Ulang) === */
+.footer-secondary {
+  display: flex;
+  order: 2; 
+  width: 100%;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap; 
+}
+
+/* FIX: Terapkan logika 50:50 pada anak langsung .footer-secondary */
+/* Ini menargetkan Tombol Petunjuk DAN Wrapper Tombol Ulang */
+.footer-secondary > button:not(.btn-score),
+.main-action-mediumwidth {
+  flex-grow: 1 !important;
+  flex-basis: 0 !important; /* KUNCI: Abaikan panjang teks */
+  width: 0 !important;      /* KUNCI: Reset width */
+  min-width: 0 !important;
+  max-width: 100%;
+}
+
+/* Styling Text pada Tombol Petunjuk */
+.footer-secondary > button:not(.btn-score) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Styling Tombol di dalam Wrapper (Tombol Ulang) */
+.main-action-mediumwidth > button {
+  width: 100% !important; /* Isi penuh wrapper 50% tadi */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* === BARIS 3: Lihat Skor (Mobile Only) === */
+.footer-secondary > button.btn-score {
+  flex: 1 1 100% !important; /* Full Width */
+  width: 100% !important;
+  order: 99;      
+  margin-top: 0.25rem; 
+  flex-basis: auto !important; /* Reset basis khusus tombol ini */
+}
+
+
+/* --- 2. LAYOUT DESKTOP & TABLET (Layar > 640px) --- */
+@media (min-width: 640px) {
+
+  /* == RESET GLOBAL DESKTOP == */
+  .footer-actions {
+    flex-direction: row;    
+    align-items: center;    
+    gap: 0.5rem; 
+  }
+
+  .footer-navigation, 
+  .footer-secondary {
+    width: auto;
+    flex-wrap: nowrap;      
+    gap: 0.5rem;
+    order: unset;           
+  }
+
+  /* Reset ukuran tombol jadi normal (ikut teks) di Desktop */
+  /* Kita matikan flex-grow dan flex-basis 0 yang dipakai di mobile */
+  .footer-navigation > button,
+  .footer-secondary > button,
+  .footer-secondary > button:not(.btn-score),
+  .main-action-mediumwidth,
+  .main-action-mediumwidth > button,
+  .footer-secondary > button.btn-score {
+    flex: none !important; 
+    flex-grow: 0 !important;
+    flex-basis: auto !important;
+    width: auto !important;
+    min-width: auto !important;
+    max-width: none !important;
+    margin: 0;
+    order: unset;
+    overflow: visible; 
+  }
+
+
+  /* == LOGIKA DESKTOP (Split Layout: Kiri - Kanan) == */
+  
+  html[data-width="fullWidth"] .footer-actions,
+  html[data-width="mediumWidth"] .footer-actions {
+    justify-content: space-between;
+    flex-wrap: nowrap; 
+  }
+
+  html[data-width="fullWidth"] .footer-secondary,
+  html[data-width="mediumWidth"] .footer-secondary {
+    justify-content: flex-start;
+    order: 1; 
+  }
+
+  html[data-width="fullWidth"] .footer-navigation,
+  html[data-width="mediumWidth"] .footer-navigation {
+    justify-content: flex-end;
+    align-items: center;
+    order: 2; 
+  }
+
+  /* Tombol Utama Desktop (Kanan) Aktif */
+  html[data-width="fullWidth"] .main-action-fullwidth,
+  html[data-width="mediumWidth"] .main-action-fullwidth { 
+    display: block !important; 
+  }
+
+  /* Tombol Mobile (Kiri) Nonaktif */
+  html[data-width="fullWidth"] .main-action-mediumwidth,
+  html[data-width="mediumWidth"] .main-action-mediumwidth { 
+    display: none !important; 
+  }
 }

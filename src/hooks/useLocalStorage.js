@@ -26,4 +26,3 @@ function useLocalStorage(key, initialValue, userId) {
 }
 
 export default useLocalStorage;
-
